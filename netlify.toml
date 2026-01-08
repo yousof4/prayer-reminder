@@ -3,7 +3,3 @@
 
 [functions]
   node_bundler = "esbuild"
-
-[[functions]]
-  path = "/api/scheduler"
-  schedule = "*/10 * * * *"
