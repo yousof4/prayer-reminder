@@ -1,5 +1,9 @@
 [build]
   functions = "netlify/functions"
 
-[functions]
-  node_bundler = "esbuild"
+[[functions]]
+  name = "scheduler"
+  schedule = "0 3 * * *"  # كل يوم الساعة 5 صباحاً بتوقيت مصر (3 UTC)
+
+[functions.scheduler.environment]
+  TZ = "Africa/Cairo"
