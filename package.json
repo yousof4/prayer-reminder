@@ -1,6 +1,9 @@
 {
   "name": "prayer-reminder",
-  "version": "1.0.0",
+  "version": "1.0.0", 
   "description": "تذكير أوقات الصلاة والطقس",
-  "main": "index.js"
+  "main": "index.js",
+  "dependencies": {
+    "adhan": "4.4.2"
+  }
 }
