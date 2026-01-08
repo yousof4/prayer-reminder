@@ -1,55 +1,93 @@
-const fetch = require('node-fetch');
-
 exports.handler = async (event, context) => {
   try {
     const apiKey = process.env.WEATHER_API_KEY;
     
+    // لو مفيش API key، استخدم بيانات افتراضية
     if (!apiKey) {
-      throw new Error('مفتاح API للطقس غير متوفر');
+      const defaultWeather = [
+        {
+          location: 'كوبري القبة',
+          temperature: 18,
+          description: 'صافي',
+          humidity: 65
+        },
+        {
+          location: 'كفر الشيخ', 
+          temperature: 16,
+          description: 'غائم جزئياً',
+          humidity: 70
+        }
+      ];
+
+      return {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        },
+        body: JSON.stringify({
+          success: true,
+          weather: defaultWeather,
+          note: 'بيانات افتراضية - أضف WEATHER_API_KEY للحصول على بيانات حقيقية',
+          timestamp: new Date().toISOString()
+        })
+      };
     }
 
-    // إحداثيات المواقع
+    // محاولة جلب بيانات حقيقية
     const locations = [
       {
         name: 'كوبري القبة',
-        lat: process.env.KOBRY_ELKOBA_LAT,
-        lon: process.env.KOBRY_ELKOBA_LON
+        lat: process.env.KOBRY_ELKOBA_LAT || '30.0626',
+        lon: process.env.KOBRY_ELKOBA_LON || '31.2497'
       },
       {
         name: 'كفر الشيخ',
-        lat: process.env.KAFRELSHEIKH_LAT,
-        lon: process.env.KAFRELSHEIKH_LON
+        lat: process.env.KAFRELSHEIKH_LAT || '31.3073', 
+        lon: process.env.KAFRELSHEIKH_LON || '30.9392'
       }
     ];
 
     const weatherData = [];
 
-    // جلب بيانات كل موقع
     for (const location of locations) {
-      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&appid=${apiKey}&units=metric&lang=ar`;
-      
-      const response = await fetch(url);
-      const data = await response.json();
+      try {
+        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&appid=${apiKey}&units=metric&lang=ar`;
+        
+        const response = await fetch(url);
+        const data = await response.json();
 
-      if (response.ok) {
+        if (response.ok) {
+          weatherData.push({
+            location: location.name,
+            temperature: Math.round(data.main.temp),
+            description: data.weather[0].description,
+            humidity: data.main.humidity
+          });
+        } else {
+          weatherData.push({
+            location: location.name,
+            temperature: 20,
+            description: 'غير متاح',
+            humidity: 60,
+            error: 'لا يمكن جلب البيانات'
+          });
+        }
+      } catch (err) {
         weatherData.push({
           location: location.name,
-          temperature: Math.round(data.main.temp),
-          description: data.weather[0].description,
-          humidity: data.main.humidity,
-          windSpeed: Math.round(data.wind?.speed * 3.6) || 0, // تحويل من m/s إلى km/h
-          pressure: data.main.pressure
-        });
-      } else {
-        weatherData.push({
-          location: location.name,
-          error: 'لا يمكن جلب بيانات الطقس'
+          temperature: 20,
+          description: 'غير متاح', 
+          humidity: 60,
+          error: err.message
         });
       }
     }
 
     return {
       statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      },
       body: JSON.stringify({
         success: true,
         weather: weatherData,
@@ -60,6 +98,9 @@ exports.handler = async (event, context) => {
   } catch (error) {
     return {
       statusCode: 500,
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      },
       body: JSON.stringify({
         success: false,
         error: error.message
