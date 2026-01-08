@@ -1,5 +1,3 @@
-const fetch = require('node-fetch');
-
 exports.handler = async (event, context) => {
   try {
     const baseUrl = `https://${event.headers.host}`;
@@ -56,9 +54,12 @@ exports.handler = async (event, context) => {
 
     return {
       statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      },
       body: JSON.stringify({
         success: true,
-        message: 'تم إرسال التذكير بنجاح',
+        message: 'تم إرسال التذكير بنجاح ✅',
         prayerTimes: prayers,
         weather: weather,
         notifications: notificationResult.results,
@@ -69,6 +70,9 @@ exports.handler = async (event, context) => {
   } catch (error) {
     return {
       statusCode: 500,
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      },
       body: JSON.stringify({
         success: false,
         error: error.message,
