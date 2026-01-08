@@ -1,12 +1,17 @@
 {
-  "name": "prayer-reminder-bot",
+  "name": "prayer-reminder", 
   "version": "1.0.0",
-  "description": "تذكير أوقات الصلاة مع الطقس والأخبار",
+  "description": "تذكير أوقات الصلاة والطقس تلقائياً",
   "main": "index.js",
-  "dependencies": {
-    "node-fetch": "^2.6.7"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  }
+  },
+  "dependencies": {
+    "adhan": "^4.5.1",
+    "node-fetch": "^2.7.0",
+    "moment-timezone": "^0.5.45"
+  },
+  "keywords": ["prayer", "weather", "notifications", "islam"],
+  "author": "Youssef",
+  "license": "MIT"
 }
