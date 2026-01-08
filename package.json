@@ -1,0 +1,12 @@
+{
+  "name": "prayer-reminder-bot",
+  "version": "1.0.0",
+  "description": "تذكير أوقات الصلاة مع الطقس والأخبار",
+  "main": "index.js",
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
