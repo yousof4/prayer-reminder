@@ -37,13 +37,13 @@ exports.handler = async (event, context) => {
     const locations = [
       {
         name: 'كوبري القبة',
-        lat: process.env.KOBRY_ELKOBA_LAT || '30.0626',
-        lon: process.env.KOBRY_ELKOBA_LON || '31.2497'
+        lat: process.env.KOBRY_ELKOBA_LAT,
+        lon: process.env.KOBRY_ELKOBA_LON
       },
       {
         name: 'كفر الشيخ',
-        lat: process.env.KAFRELSHEIKH_LAT || '31.3073', 
-        lon: process.env.KAFRELSHEIKH_LON || '30.9392'
+        lat: process.env.KAFRELSHEIKH_LAT, 
+        lon: process.env.KAFRELSHEIKH_LON
       }
     ];
 
@@ -51,6 +51,18 @@ exports.handler = async (event, context) => {
 
     for (const location of locations) {
       try {
+        // التحقق من وجود الإحداثيات
+        if (!location.lat || !location.lon) {
+          weatherData.push({
+            location: location.name,
+            temperature: 20,
+            description: 'غير متاح',
+            humidity: 60,
+            error: 'إحداثيات المكان غير محددة'
+          });
+          continue;
+        }
+
         const url = `https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&appid=${apiKey}&units=metric&lang=ar`;
         
         const response = await fetch(url);
